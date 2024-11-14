@@ -1,0 +1,9 @@
+train: ./App_recog/dataset/train/images
+val: ./App_recog/dataset/val/images
+
+nc: 5  # Número de clases
+names: 
+  0: manzana
+  1: aguacate
+  2: memebrillo
+  3: uva

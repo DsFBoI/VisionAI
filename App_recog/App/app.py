@@ -1,8 +1,8 @@
-import torch
+from ultralytics import YOLO
 import cv2
 
 # Cargar el modelo personalizado entrenado
-model = torch.hub.load('yolov5', 'custom', path='yolov5/runs/train/exp9/weights/best.pt', source='local')
+model = YOLO('C:/Users/danel/Downloads/cosas/VisionAI/runs/detect/train8/weights/best.pt')
 
 # Configurar la captura de video
 cap = cv2.VideoCapture(0)
@@ -16,14 +16,17 @@ while cap.isOpened():
     results = model(frame)
 
     # Visualizar resultados
-    detections = results.pandas().xyxy[0]
-    for _, row in detections.iterrows():
-        x_min, y_min, x_max, y_max = int(row['xmin']), int(row['ymin']), int(row['xmax']), int(row['ymax'])
-        label = row['name']
-        confidence = row['confidence']
+    for result in results:
+        boxes = result.boxes
+        for box in boxes:
+            # Obtener coordenadas del cuadro delimitador y confianza
+            x_min, y_min, x_max, y_max = map(int, box.xyxy[0])
+            confidence = box.conf[0]
+            label = box.cls[0]
 
-        cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-        cv2.putText(frame, f"{label} ({confidence:.2f})", (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            # Dibujar el cuadro delimitador y el texto en el frame
+            cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+            cv2.putText(frame, f"{label} ({confidence:.2f})", (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     cv2.imshow('Detección en tiempo real', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
