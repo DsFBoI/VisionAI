@@ -25,8 +25,9 @@ while cap.isOpened():
             label = box.cls[0]
 
             # Dibujar el cuadro delimitador y el texto en el frame
-            cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-            cv2.putText(frame, f"{label} ({confidence:.2f})", (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            if confidence >= 0.8:
+                cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+                cv2.putText(frame, f"{label} ({confidence:.2f})", (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     cv2.imshow('Detección en tiempo real', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
